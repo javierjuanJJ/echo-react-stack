@@ -42,9 +42,9 @@ export default function Sidebar() {
       {/* User section */}
       <div className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-3">
-          {user?.profileImageUrl && (
+          {user?.imageUrl && (
             <img 
-              src={user.profileImageUrl} 
+              src={user.imageUrl} 
               alt="Profile" 
               className="w-8 h-8 rounded-full" 
             />

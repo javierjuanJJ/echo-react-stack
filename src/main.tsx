@@ -6,11 +6,10 @@ import App from './App'
 import './index.css'
 
 // Get Clerk publishable key from environment variables
-// In production, you would use import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-const PUBLISHABLE_KEY = "pk_test_replace-with-your-actual-key"
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_replace-with-your-actual-key";
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Clerk Publishable Key. Add it to your .env file.")
+if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_replace-with-your-actual-key") {
+  console.warn("Missing Clerk Publishable Key. Add it to your .env file or replace it directly in main.tsx")
 }
 
 createRoot(document.getElementById("root")!).render(
