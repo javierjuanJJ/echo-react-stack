@@ -1,25 +1,68 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useAuth } from '@clerk/clerk-react';
+
+// Layout components
+import MainLayout from "@/layouts/MainLayout";
+
+// Page components
+import HomePage from "@/pages/HomePage";
+import MessagesPage from "@/pages/MessagesPage";
+import HistoryPage from "@/pages/HistoryPage";
+import TrashPage from "@/pages/TrashPage";
+import SettingsPage from "@/pages/SettingsPage";
+import NotFound from "@/pages/NotFound";
+import SignInPage from "@/pages/SignInPage";
+import SignUpPage from "@/pages/SignUpPage";
 
 const queryClient = new QueryClient();
+
+// Protected route wrapper
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { userId, isLoaded } = useAuth();
+  const location = useLocation();
+
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center h-screen w-screen">Cargando...</div>;
+  }
+
+  if (!userId) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+
+        {/* Protected routes with MainLayout */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<HomePage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="history" element={<HistoryPage />} />
+          <Route path="trash" element={<TrashPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </TooltipProvider>
   </QueryClientProvider>
 );

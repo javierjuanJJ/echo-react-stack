@@ -1,0 +1,142 @@
+
+version: '3'
+services:
+  studio:
+    image: supabase/studio:latest
+    container_name: supabase-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      SUPABASE_URL: http://kong:8000
+      STUDIO_PG_META_URL: http://meta:8080
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU5NjQxNzMsCiAgICAiZXhwIjogMTgzMzcwNDE3Mwp9.KmMx7CK_IvMiJuEppsfaY7eMbaXiBaYTXye4si0DcNY
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZSIsCiAgICAiaWF0IjogMTY3NTk2NDE3MywKICAgICJleHAiOiAxODMzNzA0MTczCn0.E_4hpiF3jQ_hVHnWOFDCUJA-ITROMdf8hLvIrxcgMJU
+    depends_on:
+      - kong
+      - meta
+
+  kong:
+    image: kong:2.8.1
+    container_name: supabase-kong
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong.yml
+      KONG_PLUGINS: cors,request-transformer,key-auth,admin-api
+    volumes:
+      - ./kong.yml:/kong.yml
+
+  auth:
+    image: supabase/gotrue:latest
+    container_name: supabase-auth
+    restart: unless-stopped
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_JWT_SECRET: your_jwt_secret_key_here
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_HOST: db
+      GOTRUE_DB_PORT: 5432
+      GOTRUE_DB_NAME: postgres
+      GOTRUE_DB_USER: postgres
+      GOTRUE_DB_PASSWORD: postgres
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_DISABLE_SIGNUP: "false"
+    depends_on:
+      - db
+
+  rest:
+    image: postgrest/postgrest:v9.0.1
+    container_name: supabase-rest
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@db:5432/postgres
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: your_jwt_secret_key_here
+    depends_on:
+      - db
+
+  realtime:
+    image: supabase/realtime:latest
+    container_name: supabase-realtime
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      PORT: 4000
+      JWT_SECRET: your_jwt_secret_key_here
+    depends_on:
+      - db
+
+  storage:
+    image: supabase/storage-api:latest
+    container_name: supabase-storage
+    restart: unless-stopped
+    environment:
+      ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU5NjQxNzMsCiAgICAiZXhwIjogMTgzMzcwNDE3Mwp9.KmMx7CK_IvMiJuEppsfaY7eMbaXiBaYTXye4si0DcNY
+      SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZSIsCiAgICAiaWF0IjogMTY3NTk2NDE3MywKICAgICJleHAiOiAxODMzNzA0MTczCn0.E_4hpiF3jQ_hVHnWOFDCUJA-ITROMdf8hLvIrxcgMJU
+      POSTGREST_URL: http://rest:3000
+      REGION: us-east-1
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      POSTGRES_CONNECTION: postgres://postgres:postgres@db:5432/postgres
+    volumes:
+      - ./volumes/storage:/var/lib/storage
+    depends_on:
+      - rest
+
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    container_name: supabase-imgproxy
+    restart: unless-stopped
+    environment:
+      IMGPROXY_ENABLE_WEBP_DETECTION: "true"
+      IMGPROXY_ENABLE_AVIF_DETECTION: "true"
+    ports:
+      - "5001:8080"
+
+  meta:
+    image: supabase/postgres-meta:latest
+    container_name: supabase-meta
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: postgres
+    depends_on:
+      - db
+
+  functions:
+    image: supabase/edge-runtime:latest
+    container_name: supabase-edge-functions
+    restart: unless-stopped
+    environment:
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU5NjQxNzMsCiAgICAiZXhwIjogMTgzMzcwNDE3Mwp9.KmMx7CK_IvMiJuEppsfaY7eMbaXiBaYTXye4si0DcNY
+    volumes:
+      - ./functions:/functions
+
+  db:
+    image: postgres:14
+    container_name: supabase-db
+    restart: unless-stopped
+    volumes:
+      - ./volumes/db/data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
