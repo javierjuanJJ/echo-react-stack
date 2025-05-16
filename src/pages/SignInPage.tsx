@@ -46,12 +46,7 @@ export default function SignInPage() {
         </div>
         
         <div className="mt-8">
-          <SignIn 
-            path="/signin"
-            routing="path"
-            signUpUrl="/signup"
-            redirectUrl="/"
-          />
+          <SignIn/>
         </div>
       </div>
     </div>

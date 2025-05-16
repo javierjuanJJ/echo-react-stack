@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useAuth } from '@clerk/clerk-react';
+import {SignIn, SignUp, useAuth} from '@clerk/clerk-react';
 
 // Layout components
 import MainLayout from "@/layouts/MainLayout";
@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!userId) {
-    return <Navigate to="/signin" state={{ from: location }} replace />;
+    return <SignInPage />;
   }
 
   return <>{children}</>;
@@ -45,7 +45,7 @@ const App = () => (
       <Routes>
         {/* Public routes */}
         <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signup" element={< SignUpPage/>} />
 
         {/* Protected routes with MainLayout */}
         <Route path="/" element={
