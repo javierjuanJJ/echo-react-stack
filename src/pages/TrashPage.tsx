@@ -1,43 +1,127 @@
 
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
+import { getDeletedMessages, Message, deleteMessagePermanently } from '@/lib/supabaseClient';
+import { useToast } from '@/hooks/use-toast';
+import MessageItem from '@/components/MessageItem';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 export default function TrashPage() {
+  const { user, isLoaded } = useUser();
+  const { toast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEmptyingTrash, setIsEmptyingTrash] = useState(false);
+
+  // Función para cargar mensajes eliminados
+  const loadDeletedMessages = async () => {
+    if (!user?.id) return;
+    
+    setIsLoading(true);
+    try {
+      const deletedMessages = await getDeletedMessages(user.id);
+      setMessages(deletedMessages);
+    } catch (error) {
+      console.error('Error fetching deleted messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoaded || !user?.id) return;
+    loadDeletedMessages();
+  }, [user?.id, isLoaded]);
+
+  const emptyTrash = async () => {
+    if (!user?.id || messages.length === 0) return;
+    
+    setIsEmptyingTrash(true);
+    try {
+      // Eliminar todos los mensajes en la papelera
+      const deletePromises = messages.map(message => 
+        deleteMessagePermanently(message.id)
+      );
+      
+      await Promise.all(deletePromises);
+      
+      toast({
+        title: "Papelera vaciada",
+        description: "Todos los mensajes han sido eliminados permanentemente"
+      });
+      
+      setMessages([]);
+    } catch (error) {
+      console.error('Error emptying trash:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo vaciar la papelera",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEmptyingTrash(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Papelera</h1>
-        <button className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors text-sm">
-          Vaciar papelera
-        </button>
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="destructive"
+              disabled={isEmptyingTrash || messages.length === 0}
+            >
+              Vaciar papelera
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Vaciar papelera?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará permanentemente todos los mensajes de la papelera y no se podrán recuperar.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={emptyTrash}>Vaciar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       
       <div className="border rounded-lg shadow-sm">
         <div className="p-6">
-          <div className="divide-y">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="py-4 first:pt-0 last:pb-0">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
-                    <span className="text-destructive font-medium">{i}</span>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium leading-none">Elemento eliminado {i}</h3>
-                      <div className="flex space-x-2">
-                        <button className="text-xs text-primary hover:underline">Restaurar</button>
-                        <button className="text-xs text-destructive hover:underline">Eliminar</button>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Este elemento fue eliminado el {new Date().toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Empty state */}
-          {false && (
-            <div className="py-12 text-center">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Cargando papelera...</p>
+            </div>
+          ) : messages.length > 0 ? (
+            <div className="divide-y">
+              {messages.map(message => (
+                <MessageItem 
+                  key={message.id} 
+                  message={message} 
+                  type="deleted"
+                  onAction={loadDeletedMessages}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
               <p className="text-muted-foreground">La papelera está vacía</p>
             </div>
           )}

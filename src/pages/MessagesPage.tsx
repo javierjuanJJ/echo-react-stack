@@ -1,32 +1,88 @@
 
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
+import { getReceivedMessages, Message, subscribeToMessages } from '@/lib/supabaseClient';
+import { useToast } from '@/hooks/use-toast';
+import MessageItem from '@/components/MessageItem';
+
 export default function MessagesPage() {
+  const { user, isLoaded } = useUser();
+  const { toast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Función para cargar mensajes
+  const loadMessages = async () => {
+    if (!user?.id) return;
+    
+    setIsLoading(true);
+    try {
+      const receivedMessages = await getReceivedMessages(user.id);
+      setMessages(receivedMessages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoaded || !user?.id) return;
+    
+    loadMessages();
+    
+    // Configurar suscripción a nuevos mensajes
+    const subscription = subscribeToMessages(user.id, (payload) => {
+      const newMessage = payload.new;
+      toast({
+        title: "Nuevo mensaje",
+        description: "Has recibido un nuevo mensaje"
+      });
+      // Actualizar la lista de mensajes
+      loadMessages();
+    });
+    
+    // Verificar mensajes expirados cada minuto
+    const expirationInterval = setInterval(() => {
+      setMessages(prevMessages => 
+        prevMessages.filter(msg => new Date(msg.expires_at) > new Date())
+      );
+    }, 60000);
+    
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(expirationInterval);
+    };
+  }, [user?.id, isLoaded, toast]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Mensajes</h1>
       </div>
+      
       <div className="border rounded-lg shadow-sm">
         <div className="p-6">
-          <div className="divide-y">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="py-4 first:pt-0 last:pb-0">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-medium">U{i}</span>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium leading-none">Usuario {i}</h3>
-                      <p className="text-xs text-muted-foreground">Hace {i} horas</p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Este es el contenido del mensaje {i}. Aquí iría el texto del mensaje.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Cargando mensajes...</p>
+            </div>
+          ) : messages.length > 0 ? (
+            <div className="divide-y">
+              {messages.map(message => (
+                <MessageItem 
+                  key={message.id} 
+                  message={message} 
+                  type="received" 
+                  onAction={loadMessages}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No hay mensajes recibidos</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

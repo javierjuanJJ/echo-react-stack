@@ -1,18 +1,181 @@
 
-// Este es un cliente Supabase básico para usar en el frontend
-// Sustituye las claves de ejemplo por tus claves reales en producción
+import { createClient } from '@supabase/supabase-js';
 
-// En un proyecto real, usarías variables de entorno:
-// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-// const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Usamos variables de entorno para las credenciales
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabaseUrl = 'http://localhost:8000';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UiLAogICAgImlhdCI6IDE2NzU5NjQxNzMsCiAgICAiZXhwIjogMTgzMzcwNDE3Mwp9.KmMx7CK_IvMiJuEppsfaY7eMbaXiBaYTXye4si0DcNY';
+// Exportamos el cliente de Supabase para usarlo en toda la aplicación
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Si usas supabase-js
-// import { createClient } from '@supabase/supabase-js';
-// export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Tipos para nuestras tablas de Supabase
+export type Message = {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  message: string;
+  created_at: string;
+  expires_at: string;
+  is_read: boolean;
+  is_deleted: boolean;
+};
 
-// Este archivo es solo un ejemplo de cómo se estructuraría el cliente
-// Para implementarlo completo, necesitarías instalar @supabase/supabase-js
-// Y tener una instancia de Supabase ejecutándose
+// Función para obtener mensajes recibidos
+export async function getReceivedMessages(userId: string) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('recipient_id', userId)
+    .eq('is_deleted', false)
+    .gt('expires_at', new Date().toISOString())
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching received messages:', error);
+    return [];
+  }
+  return data as Message[];
+}
+
+// Función para obtener historial de mensajes enviados
+export async function getSentMessages(userId: string) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('sender_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching sent messages:', error);
+    return [];
+  }
+  return data as Message[];
+}
+
+// Función para obtener mensajes en la papelera
+export async function getDeletedMessages(userId: string) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+    .eq('is_deleted', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching deleted messages:', error);
+    return [];
+  }
+  return data as Message[];
+}
+
+// Función para enviar un mensaje
+export async function sendMessage({ 
+  sender_id, 
+  recipient_id, 
+  message, 
+  expiration 
+}: { 
+  sender_id: string, 
+  recipient_id: string, 
+  message: string, 
+  expiration: '5min' | '1hour' | '1day' | '1week' 
+}) {
+  // Calcular fecha de expiración
+  const expirationMap = {
+    '5min': 5 * 60 * 1000,
+    '1hour': 60 * 60 * 1000,
+    '1day': 24 * 60 * 60 * 1000,
+    '1week': 7 * 24 * 60 * 60 * 1000
+  };
+  
+  const expiresAt = new Date(Date.now() + expirationMap[expiration]).toISOString();
+  
+  const { data, error } = await supabase
+    .from('messages')
+    .insert([
+      { 
+        sender_id, 
+        recipient_id, 
+        message, 
+        expires_at: expiresAt,
+      }
+    ]);
+
+  if (error) {
+    console.error('Error sending message:', error);
+    return null;
+  }
+  
+  return data;
+}
+
+// Función para marcar un mensaje como leído
+export async function markMessageAsRead(messageId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ is_read: true })
+    .eq('id', messageId);
+
+  if (error) {
+    console.error('Error marking message as read:', error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Función para marcar un mensaje como eliminado
+export async function markMessageAsDeleted(messageId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ is_deleted: true })
+    .eq('id', messageId);
+
+  if (error) {
+    console.error('Error marking message as deleted:', error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Función para restaurar un mensaje eliminado
+export async function restoreMessage(messageId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ is_deleted: false })
+    .eq('id', messageId);
+
+  if (error) {
+    console.error('Error restoring message:', error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Función para eliminar permanentemente un mensaje
+export async function deleteMessagePermanently(messageId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .delete()
+    .eq('id', messageId);
+
+  if (error) {
+    console.error('Error deleting message permanently:', error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Suscripción a nuevos mensajes (realtime)
+export function subscribeToMessages(userId: string, callback: (payload: any) => void) {
+  return supabase
+    .channel('public:messages')
+    .on('postgres_changes', 
+      { event: 'INSERT', schema: 'public', table: 'messages', filter: `recipient_id=eq.${userId}` },
+      callback
+    )
+    .subscribe();
+}
