@@ -16,6 +16,6 @@
     "noUnusedLocals": false,
     "strictNullChecks": false
   },
-  "include": ["src"],         // Asegúrate que tu archivo está dentro de "src"
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

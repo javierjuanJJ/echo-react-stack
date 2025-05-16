@@ -69,16 +69,16 @@ export async function getDeletedMessages(userId: string) {
 }
 
 // Función para enviar un mensaje
-export async function sendMessage({ 
-  sender_id, 
-  recipient_id, 
-  message, 
-  expiration 
-}: { 
-  sender_id: string, 
-  recipient_id: string, 
-  message: string, 
-  expiration: '5min' | '1hour' | '1day' | '1week' 
+export async function sendMessage({
+  sender_id,
+  recipient_id,
+  message,
+  expiration
+}: {
+  sender_id: string,
+  recipient_id: string,
+  message: string,
+  expiration: '5min' | '1hour' | '1day' | '1week'
 }) {
   // Calcular fecha de expiración
   const expirationMap = {
@@ -87,16 +87,16 @@ export async function sendMessage({
     '1day': 24 * 60 * 60 * 1000,
     '1week': 7 * 24 * 60 * 60 * 1000
   };
-  
+
   const expiresAt = new Date(Date.now() + expirationMap[expiration]).toISOString();
-  
+
   const { data, error } = await supabase
     .from('messages')
     .insert([
-      { 
-        sender_id, 
-        recipient_id, 
-        message, 
+      {
+        sender_id,
+        recipient_id,
+        message,
         expires_at: expiresAt,
       }
     ]);
@@ -105,7 +105,7 @@ export async function sendMessage({
     console.error('Error sending message:', error);
     return null;
   }
-  
+
   return data;
 }
 
@@ -120,7 +120,7 @@ export async function markMessageAsRead(messageId: string) {
     console.error('Error marking message as read:', error);
     return false;
   }
-  
+
   return true;
 }
 
@@ -135,7 +135,7 @@ export async function markMessageAsDeleted(messageId: string) {
     console.error('Error marking message as deleted:', error);
     return false;
   }
-  
+
   return true;
 }
 
@@ -150,7 +150,7 @@ export async function restoreMessage(messageId: string) {
     console.error('Error restoring message:', error);
     return false;
   }
-  
+
   return true;
 }
 
@@ -165,23 +165,38 @@ export async function deleteMessagePermanently(messageId: string) {
     console.error('Error deleting message permanently:', error);
     return false;
   }
-  
+
   return true;
 }
 
 // Suscripción a nuevos mensajes (realtime)
-export function subscribeToMessages(userId: string, callback: (payload: any) => void): RealtimeChannel {
+/*export function subscribeToMessages(userId: string, callback: (payload: any) => void): RealtimeChannel {
   return supabase
     .channel('messages-channel')
     .on(
-      'postgres_changes', 
-      { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'messages', 
-        filter: `recipient_id=eq.${userId}` 
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `recipient_id=eq.${userId}`
       },
       callback
     )
     .subscribe();
+}*/
+export function subscribeToMessages(userId: string, callback: (payload: any) => void): RealtimeChannel {
+  return supabase
+      .channel('messages-channel')
+      .on(
+          "postgres_changes",
+          {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'messages',
+              filter: `recipient_id=eq.${userId}`
+          },
+          callback
+      )
+      .subscribe();
 }
