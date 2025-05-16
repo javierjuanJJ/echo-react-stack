@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import MessageComposer from '@/components/MessageComposer';
@@ -30,7 +29,6 @@ export default function HomePage() {
     
     // Configurar suscripción a nuevos mensajes
     const subscription = subscribeToMessages(user.id, (payload) => {
-      const newMessage = payload.new;
       toast({
         title: "Nuevo mensaje",
         description: "Has recibido un nuevo mensaje"

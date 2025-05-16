@@ -1,5 +1,5 @@
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, RealtimeChannel } from '@supabase/supabase-js';
 
 // Usamos variables de entorno para las credenciales
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -170,11 +170,17 @@ export async function deleteMessagePermanently(messageId: string) {
 }
 
 // Suscripción a nuevos mensajes (realtime)
-export function subscribeToMessages(userId: string, callback: (payload: any) => void) {
+export function subscribeToMessages(userId: string, callback: (payload: any) => void): RealtimeChannel {
   return supabase
-    .channel('public:messages')
-    .on('postgres_changes', 
-      { event: 'INSERT', schema: 'public', table: 'messages', filter: `recipient_id=eq.${userId}` },
+    .channel('messages-channel')
+    .on(
+      'postgres_changes', 
+      { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'messages', 
+        filter: `recipient_id=eq.${userId}` 
+      },
       callback
     )
     .subscribe();

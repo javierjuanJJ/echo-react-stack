@@ -4,7 +4,7 @@ import { useUser, SignOutButton } from "@clerk/clerk-react";
 import { MessageSquare, Clock, Trash2, Settings, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Message, getReceivedMessages, subscribeToMessages } from "@/lib/supabaseClient";
+import { getReceivedMessages, subscribeToMessages } from "@/lib/supabaseClient";
 
 export default function Sidebar() {
   const { user } = useUser();

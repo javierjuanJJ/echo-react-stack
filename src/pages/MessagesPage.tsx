@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { getReceivedMessages, Message, subscribeToMessages } from '@/lib/supabaseClient';
@@ -33,7 +32,6 @@ export default function MessagesPage() {
     
     // Configurar suscripción a nuevos mensajes
     const subscription = subscribeToMessages(user.id, (payload) => {
-      const newMessage = payload.new;
       toast({
         title: "Nuevo mensaje",
         description: "Has recibido un nuevo mensaje"
