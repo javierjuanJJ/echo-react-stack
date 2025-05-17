@@ -1,5 +1,4 @@
-
-import { createClient, RealtimeChannel } from '@supabase/supabase-js';
+import {createClient, RealtimeChannel} from '@supabase/supabase-js';
 
 // Usamos variables de entorno para las credenciales
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -22,28 +21,34 @@ export type Message = {
 
 // Función para obtener mensajes recibidos
 export async function getReceivedMessages(userId: string) {
+  const nowISO = new Date().toISOString();
+
   const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('recipient_id', userId)
-    .eq('is_deleted', false)
-    .gt('expires_at', new Date().toISOString())
-    .order('created_at', { ascending: false });
+      .from('messages')
+      .select('*')
+      .eq('recipient_id', userId)
+      .eq('is_deleted', false)
+      .or(`expires_at.gt.${nowISO},expires_at.is.null`)
+      .order('created_at', { ascending: false });
+
+  console.log('Fetching messages for user:', userId);
 
   if (error) {
     console.error('Error fetching received messages:', error);
     return [];
   }
+
+  console.log('Received messages:', data);
   return data as Message[];
 }
 
 // Función para obtener historial de mensajes enviados
 export async function getSentMessages(userId: string) {
   const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('sender_id', userId)
-    .order('created_at', { ascending: false });
+      .from('messages')
+      .select('*')
+      .order('created_at', { ascending: false });
+
 
   if (error) {
     console.error('Error fetching sent messages:', error);
@@ -89,7 +94,7 @@ export async function sendMessage({
   };
 
   const expiresAt = new Date(Date.now() + expirationMap[expiration]).toISOString();
-
+  console.log( sender_id , recipient_id , message)
   const { data, error } = await supabase
     .from('messages')
     .insert([
@@ -189,14 +194,14 @@ export function subscribeToMessages(userId: string, callback: (payload: any) => 
   return supabase
       .channel('messages-channel')
       .on(
-          "postgres_changes",
+          'postgres_changes',
           {
-              event: 'INSERT',
-              schema: 'public',
-              table: 'messages',
-              filter: `recipient_id=eq.${userId}`
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `recipient_id=eq.${userId}`
           },
-          callback
+          (payload) => callback(payload)
       )
       .subscribe();
 }
