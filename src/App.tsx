@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import {SignIn, SignUp, useAuth} from '@clerk/clerk-react';
+import { ThemeProvider } from "@/contexts/ThemeProvider";
 
 // Layout components
 import MainLayout from "@/layouts/MainLayout";
@@ -39,31 +40,33 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        {/* Public routes */}
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={< SignUpPage/>} />
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={< SignUpPage/>} />
 
-        {/* Protected routes with MainLayout */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<HomePage />} />
-          <Route path="messages" element={<MessagesPage />} />
-          <Route path="history" element={<HistoryPage />} />
-          <Route path="trash" element={<TrashPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
+          {/* Protected routes with MainLayout */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<HomePage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="history" element={<HistoryPage />} />
+            <Route path="trash" element={<TrashPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
 
-        {/* Catch-all route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+          {/* Catch-all route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

@@ -6,10 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/contexts/ThemeProvider';
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser();
   const { toast } = useToast();
+  const { theme } = useTheme();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   
@@ -80,6 +83,27 @@ export default function SettingsPage() {
               readOnly
             />
           </div>
+        </div>
+        
+        <Separator />
+        
+        <div>
+          <h3 className="text-lg font-medium">Apariencia</h3>
+          <p className="text-sm text-muted-foreground">
+            Personaliza el aspecto visual de la aplicación.
+          </p>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <label className="text-sm font-medium">
+              Tema de la aplicación
+            </label>
+            <p className="text-xs text-muted-foreground">
+              {theme === 'dark' ? 'Modo oscuro' : 'Modo claro'} actualmente activado
+            </p>
+          </div>
+          <ThemeToggle />
         </div>
         
         <Separator />
