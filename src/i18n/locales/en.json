@@ -1,0 +1,121 @@
+
+{
+  "common": {
+    "loading": "Loading...",
+    "redirecting": "Redirecting...",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "new": "New",
+    "seeAll": "See all",
+    "empty": "No data available",
+    "language": "Language"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?"
+  },
+  "navigation": {
+    "home": "Home",
+    "messages": "Messages",
+    "history": "History",
+    "trash": "Trash",
+    "settings": "Settings"
+  },
+  "messages": {
+    "title": "Messages",
+    "newMessage": "New Message",
+    "recipient": "Recipient (ID or email)",
+    "enterRecipient": "Enter recipient ID or email",
+    "message": "Message",
+    "enterMessage": "Write your message here...",
+    "duration": "Message duration",
+    "send": "Send message",
+    "sending": "Sending...",
+    "sent": "Message sent",
+    "sentSuccess": "The message has been sent successfully",
+    "sentError": "Could not send the message",
+    "fieldRequired": "All fields are required",
+    "recent": "Recent messages",
+    "from": "From",
+    "to": "To",
+    "new": "New",
+    "expired": "Expired",
+    "readMore": "Read more",
+    "loading": "Loading messages...",
+    "noMessages": "No messages received",
+    "noRecentMessages": "No recent messages"
+  },
+  "durations": {
+    "5min": "5 minutes",
+    "1hour": "1 hour",
+    "1day": "1 day",
+    "1week": "1 week",
+    "selectDuration": "Select duration"
+  },
+  "history": {
+    "title": "History",
+    "loading": "Loading history...",
+    "noHistory": "No sent messages"
+  },
+  "trash": {
+    "title": "Trash",
+    "emptyTrash": "Empty trash",
+    "emptyTrashConfirm": "Empty trash?",
+    "emptyTrashWarning": "This action will permanently delete all messages in the trash and they cannot be recovered.",
+    "emptyTrashAction": "Empty",
+    "emptyTrashSuccess": "Trash emptied",
+    "emptyTrashSuccessDetail": "All messages have been permanently deleted",
+    "emptyTrashError": "Could not empty the trash",
+    "loading": "Loading trash...",
+    "empty": "Trash is empty"
+  },
+  "messageActions": {
+    "delete": "Delete message",
+    "deleted": "Message deleted",
+    "deletedDetail": "The message has been moved to trash",
+    "restore": "Restore message",
+    "restored": "Message restored",
+    "restoredDetail": "The message has been restored successfully",
+    "permanentDelete": "Delete permanently",
+    "permanentDeleted": "Message deleted",
+    "permanentDeletedDetail": "The message has been permanently deleted",
+    "error": "Error",
+    "deleteError": "Could not delete the message",
+    "restoreError": "Could not restore the message",
+    "permanentDeleteError": "Could not permanently delete the message"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "profileDesc": "Manage your profile information.",
+    "fullName": "Full name",
+    "email": "Email",
+    "userId": "User ID",
+    "appearance": "Appearance",
+    "appearanceDesc": "Customize the visual appearance of the application.",
+    "theme": "Application theme",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "languageDesc": "Change the application language.",
+    "notifications": "Notifications",
+    "notificationsDesc": "Configure your notification preferences.",
+    "emailNotifications": "Email notifications",
+    "emailNotificationsDesc": "Receive email notifications when you get a new message.",
+    "pushNotifications": "Push notifications",
+    "pushNotificationsDesc": "Receive push notifications in your browser when you get a new message.",
+    "saved": "Settings saved",
+    "savedDesc": "Your preferences have been updated successfully"
+  },
+  "errors": {
+    "notFound": "Oops! Page not found",
+    "notFoundDesc": "Sorry, the page you are looking for doesn't exist or has been moved.",
+    "goHome": "Back to home",
+    "error404": "404 Error: User tried to access a non-existent route"
+  },
+  "notifications": {
+    "newMessage": "New message",
+    "newMessageDesc": "You have received a new message"
+  }
+}

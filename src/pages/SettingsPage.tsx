@@ -8,25 +8,28 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/contexts/ThemeProvider';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   
   const handleSaveSettings = () => {
     toast({
-      title: "Configuración guardada",
-      description: "Tus preferencias han sido actualizadas correctamente"
+      title: t('settings.saved'),
+      description: t('settings.savedDesc')
     });
   };
 
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Cargando...</p>
+        <p className="text-muted-foreground">{t('common.loading')}</p>
       </div>
     );
   }
@@ -34,23 +37,23 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('settings.title')}</h1>
       </div>
       
       <Separator />
       
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-medium">Perfil</h3>
+          <h3 className="text-lg font-medium">{t('settings.profile')}</h3>
           <p className="text-sm text-muted-foreground">
-            Administra la información de tu perfil.
+            {t('settings.profileDesc')}
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="fullName">
-              Nombre completo
+              {t('settings.fullName')}
             </label>
             <Input
               id="fullName"
@@ -62,7 +65,7 @@ export default function SettingsPage() {
           
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="email">
-              Correo electrónico
+              {t('settings.email')}
             </label>
             <Input
               id="email"
@@ -74,7 +77,7 @@ export default function SettingsPage() {
           
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="userId">
-              ID de usuario
+              {t('settings.userId')}
             </label>
             <Input
               id="userId"
@@ -88,30 +91,9 @@ export default function SettingsPage() {
         <Separator />
         
         <div>
-          <h3 className="text-lg font-medium">Apariencia</h3>
+          <h3 className="text-lg font-medium">{t('settings.appearance')}</h3>
           <p className="text-sm text-muted-foreground">
-            Personaliza el aspecto visual de la aplicación.
-          </p>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">
-              Tema de la aplicación
-            </label>
-            <p className="text-xs text-muted-foreground">
-              {theme === 'dark' ? 'Modo oscuro' : 'Modo claro'} actualmente activado
-            </p>
-          </div>
-          <ThemeToggle />
-        </div>
-        
-        <Separator />
-        
-        <div>
-          <h3 className="text-lg font-medium">Notificaciones</h3>
-          <p className="text-sm text-muted-foreground">
-            Configura tus preferencias de notificaciones.
+            {t('settings.appearanceDesc')}
           </p>
         </div>
         
@@ -119,10 +101,45 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <label className="text-sm font-medium">
-                Notificaciones por correo
+                {t('settings.theme')}
               </label>
               <p className="text-xs text-muted-foreground">
-                Recibe notificaciones por correo cuando recibas un mensaje nuevo.
+                {theme === 'dark' ? t('settings.darkMode') : t('settings.lightMode')}
+              </p>
+            </div>
+            <ThemeToggle />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <label className="text-sm font-medium">
+                {t('common.language')}
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {t('settings.languageDesc')}
+              </p>
+            </div>
+            <LanguageSwitcher />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div>
+          <h3 className="text-lg font-medium">{t('settings.notifications')}</h3>
+          <p className="text-sm text-muted-foreground">
+            {t('settings.notificationsDesc')}
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <label className="text-sm font-medium">
+                {t('settings.emailNotifications')}
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {t('settings.emailNotificationsDesc')}
               </p>
             </div>
             <Switch
@@ -134,10 +151,10 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <label className="text-sm font-medium">
-                Notificaciones push
+                {t('settings.pushNotifications')}
               </label>
               <p className="text-xs text-muted-foreground">
-                Recibe notificaciones push en tu navegador cuando recibas un mensaje nuevo.
+                {t('settings.pushNotificationsDesc')}
               </p>
             </div>
             <Switch
@@ -149,7 +166,7 @@ export default function SettingsPage() {
         
         <div className="flex justify-end">
           <Button onClick={handleSaveSettings}>
-            Guardar cambios
+            {t('common.save')}
           </Button>
         </div>
       </div>

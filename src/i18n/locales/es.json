@@ -1,0 +1,121 @@
+
+{
+  "common": {
+    "loading": "Cargando...",
+    "redirecting": "Redirigiendo...",
+    "save": "Guardar cambios",
+    "cancel": "Cancelar",
+    "new": "Nuevo",
+    "seeAll": "Ver todos",
+    "empty": "No hay datos disponibles",
+    "language": "Idioma"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "noAccount": "¿No tienes una cuenta?"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "messages": "Mensajes",
+    "history": "Historial",
+    "trash": "Papelera",
+    "settings": "Ajustes"
+  },
+  "messages": {
+    "title": "Mensajes",
+    "newMessage": "Nuevo Mensaje",
+    "recipient": "Destinatario (ID o correo)",
+    "enterRecipient": "Ingrese ID o correo del destinatario",
+    "message": "Mensaje",
+    "enterMessage": "Escribe tu mensaje aquí...",
+    "duration": "Duración del mensaje",
+    "send": "Enviar mensaje",
+    "sending": "Enviando...",
+    "sent": "Mensaje enviado",
+    "sentSuccess": "El mensaje se ha enviado correctamente",
+    "sentError": "No se pudo enviar el mensaje",
+    "fieldRequired": "Todos los campos son obligatorios",
+    "recent": "Mensajes recientes",
+    "from": "De",
+    "to": "Para",
+    "new": "Nuevo",
+    "expired": "Expirado",
+    "readMore": "Ver más",
+    "loading": "Cargando mensajes...",
+    "noMessages": "No hay mensajes recibidos",
+    "noRecentMessages": "No hay mensajes recientes"
+  },
+  "durations": {
+    "5min": "5 minutos",
+    "1hour": "1 hora",
+    "1day": "1 día",
+    "1week": "1 semana",
+    "selectDuration": "Seleccionar duración"
+  },
+  "history": {
+    "title": "Historial",
+    "loading": "Cargando historial...",
+    "noHistory": "No hay mensajes enviados"
+  },
+  "trash": {
+    "title": "Papelera",
+    "emptyTrash": "Vaciar papelera",
+    "emptyTrashConfirm": "¿Vaciar papelera?",
+    "emptyTrashWarning": "Esta acción eliminará permanentemente todos los mensajes de la papelera y no se podrán recuperar.",
+    "emptyTrashAction": "Vaciar",
+    "emptyTrashSuccess": "Papelera vaciada",
+    "emptyTrashSuccessDetail": "Todos los mensajes han sido eliminados permanentemente",
+    "emptyTrashError": "No se pudo vaciar la papelera",
+    "loading": "Cargando papelera...",
+    "empty": "La papelera está vacía"
+  },
+  "messageActions": {
+    "delete": "Eliminar mensaje",
+    "deleted": "Mensaje eliminado",
+    "deletedDetail": "El mensaje se ha movido a la papelera",
+    "restore": "Restaurar mensaje",
+    "restored": "Mensaje restaurado",
+    "restoredDetail": "El mensaje ha sido restaurado correctamente",
+    "permanentDelete": "Eliminar permanentemente",
+    "permanentDeleted": "Mensaje eliminado",
+    "permanentDeletedDetail": "El mensaje ha sido eliminado permanentemente",
+    "error": "Error",
+    "deleteError": "No se pudo eliminar el mensaje",
+    "restoreError": "No se pudo restaurar el mensaje",
+    "permanentDeleteError": "No se pudo eliminar permanentemente el mensaje"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "profileDesc": "Administra la información de tu perfil.",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "userId": "ID de usuario",
+    "appearance": "Apariencia",
+    "appearanceDesc": "Personaliza el aspecto visual de la aplicación.",
+    "theme": "Tema de la aplicación",
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro",
+    "languageDesc": "Cambiar el idioma de la aplicación.",
+    "notifications": "Notificaciones",
+    "notificationsDesc": "Configura tus preferencias de notificaciones.",
+    "emailNotifications": "Notificaciones por correo",
+    "emailNotificationsDesc": "Recibe notificaciones por correo cuando recibas un mensaje nuevo.",
+    "pushNotifications": "Notificaciones push",
+    "pushNotificationsDesc": "Recibe notificaciones push en tu navegador cuando recibas un mensaje nuevo.",
+    "saved": "Configuración guardada",
+    "savedDesc": "Tus preferencias han sido actualizadas correctamente"
+  },
+  "errors": {
+    "notFound": "¡Oops! Página no encontrada",
+    "notFoundDesc": "Lo sentimos, la página que estás buscando no existe o ha sido movida.",
+    "goHome": "Volver al inicio",
+    "error404": "404 Error: Usuario intentó acceder a una ruta que no existe"
+  },
+  "notifications": {
+    "newMessage": "Nuevo mensaje",
+    "newMessageDesc": "Has recibido un nuevo mensaje"
+  }
+}
