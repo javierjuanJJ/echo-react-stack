@@ -16,7 +16,7 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   
   // Prevent hydration mismatch
@@ -48,7 +48,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
           className={cn("w-9 px-0", className)}
         >
           <Globe className="h-4 w-4" />
-          <span className="sr-only">Toggle language</span>
+          <span className="sr-only">{t('settings.theme')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

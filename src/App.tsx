@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, useLocation } from "react-router-dom";
 import {SignIn, SignUp, useAuth} from '@clerk/clerk-react';
 import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { useTranslation } from 'react-i18next';
 
 // Layout components
 import MainLayout from "@/layouts/MainLayout";
@@ -25,10 +26,11 @@ const queryClient = new QueryClient();
 // Protected route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { userId, isLoaded } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
 
   if (!isLoaded) {
-    return <div className="flex items-center justify-center h-screen w-screen">Cargando...</div>;
+    return <div className="flex items-center justify-center h-screen w-screen">{t('common.loading')}</div>;
   }
 
   if (!userId) {
@@ -38,36 +40,38 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <Routes>
-          {/* Public routes */}
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={< SignUpPage/>} />
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            {/* Public routes */}
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={< SignUpPage/>} />
 
-          {/* Protected routes with MainLayout */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <MainLayout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<HomePage />} />
-            <Route path="messages" element={<MessagesPage />} />
-            <Route path="history" element={<HistoryPage />} />
-            <Route path="trash" element={<TrashPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
+            {/* Protected routes with MainLayout */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<HomePage />} />
+              <Route path="messages" element={<MessagesPage />} />
+              <Route path="history" element={<HistoryPage />} />
+              <Route path="trash" element={<TrashPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
 
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
