@@ -4,12 +4,13 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/contexts/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import {shouldSendNotifications} from "@/utils/notificationUtils.ts";
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser();
@@ -18,8 +19,17 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
-  
+  // Load notification preferences from localStorage
+  useEffect(() => {
+   const savedPushPref = localStorage.getItem('pushNotifications') === 'true';
+
+    setPushNotifications(savedPushPref);
+  }, []);
+
   const handleSaveSettings = () => {
+    console.log('shouldSendNotifications(\'push\') ', shouldSendNotifications('push'))
+    localStorage.setItem('pushNotifications', String(pushNotifications));
+
     toast({
       title: t('settings.saved'),
       description: t('settings.savedDesc')
@@ -133,21 +143,6 @@ export default function SettingsPage() {
         </div>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <label className="text-sm font-medium">
-                {t('settings.emailNotifications')}
-              </label>
-              <p className="text-xs text-muted-foreground">
-                {t('settings.emailNotificationsDesc')}
-              </p>
-            </div>
-            <Switch
-              checked={emailNotifications}
-              onCheckedChange={setEmailNotifications}
-            />
-          </div>
-          
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <label className="text-sm font-medium">

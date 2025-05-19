@@ -44,9 +44,13 @@ export async function getReceivedMessages(userId: string) {
 
 // Función para obtener historial de mensajes enviados
 export async function getSentMessages(userId: string) {
+  const nowISO = new Date().toISOString();
   const { data, error } = await supabase
       .from('messages')
       .select('*')
+      .eq('sender_id', userId)
+      .eq('is_deleted', false)
+      .or(`expires_at.gt.${nowISO},expires_at.is.null`)
       .order('created_at', { ascending: false });
 
 

@@ -3,6 +3,8 @@ import { useUser } from '@clerk/clerk-react';
 import { getReceivedMessages, Message, subscribeToMessages } from '@/lib/supabaseClient';
 import { useToast } from '@/hooks/use-toast';
 import MessageItem from '@/components/MessageItem';
+import {sendPushNotification, shouldSendNotifications} from "@/utils/notificationUtils.ts";
+import {t} from "i18next";
 
 export default function MessagesPage() {
   const { user, isLoaded } = useUser();
@@ -13,7 +15,7 @@ export default function MessagesPage() {
   // Función para cargar mensajes
   const loadMessages = async () => {
     if (!user?.id) return;
-    
+
     setIsLoading(true);
     try {
       const receivedMessages = await getReceivedMessages(user.id);
@@ -27,15 +29,27 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (!isLoaded || !user?.id) return;
-    
+
     loadMessages();
     
     // Configurar suscripción a nuevos mensajes
     const subscription = subscribeToMessages(user.id, (payload) => {
+
       toast({
-        title: "Nuevo mensaje",
-        description: "Has recibido un nuevo mensaje"
+        title: t('notifications.newMessage'),
+        description: t('notifications.newMessageDesc')
       });
+
+
+
+      if (shouldSendNotifications('push')) {
+        sendPushNotification({
+          title: t('notifications.newMessage'),
+          message: t('notifications.newMessageDesc'),
+          sender: payload.new?.sender_id
+        });
+      }
+
       // Actualizar la lista de mensajes
       loadMessages();
     });

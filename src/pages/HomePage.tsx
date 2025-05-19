@@ -3,6 +3,8 @@ import { useUser } from '@clerk/clerk-react';
 import MessageComposer from '@/components/MessageComposer';
 import { getReceivedMessages, Message, subscribeToMessages } from '@/lib/supabaseClient';
 import { useToast } from '@/hooks/use-toast';
+import { sendPushNotification, shouldSendNotifications} from '@/utils/notificationUtils';
+import {t} from "i18next";
 
 export default function HomePage() {
   const { user, isLoaded } = useUser();
@@ -33,6 +35,17 @@ export default function HomePage() {
         title: "Nuevo mensaje",
         description: "Has recibido un nuevo mensaje"
       });
+
+      // Handle push notification
+      if (shouldSendNotifications('push')) {
+
+        sendPushNotification({
+          title: t('notifications.newMessage'),
+          message: t('notifications.newMessageDesc'),
+          sender: payload.new?.sender_id
+        });
+      }
+
       // Actualizar la lista de mensajes
       fetchReceivedMessages();
     });
