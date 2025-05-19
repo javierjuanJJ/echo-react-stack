@@ -9,173 +9,173 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Tipos para nuestras tablas de Supabase
 export type Message = {
-  id: string;
-  sender_id: string;
-  recipient_id: string;
-  message: string;
-  created_at: string;
-  expires_at: string;
-  is_read: boolean;
-  is_deleted: boolean;
+    id: string;
+    sender_id: string;
+    recipient_id: string;
+    message: string;
+    created_at: string;
+    expires_at: string;
+    is_read: boolean;
+    is_deleted: boolean;
 };
 
 // Función para obtener mensajes recibidos
 export async function getReceivedMessages(userId: string) {
-  const nowISO = new Date().toISOString();
+    const nowISO = new Date().toISOString();
 
-  const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('recipient_id', userId)
-      .eq('is_deleted', false)
-      .or(`expires_at.gt.${nowISO},expires_at.is.null`)
-      .order('created_at', { ascending: false });
+    const {data, error} = await supabase
+        .from('messages')
+        .select('*')
+        .eq('recipient_id', userId)
+        .eq('is_deleted', false)
+        .or(`expires_at.gt.${nowISO},expires_at.is.null`)
+        .order('created_at', {ascending: false});
 
-  console.log('Fetching messages for user:', userId);
+    console.log('Fetching messages for user:', userId);
 
-  if (error) {
-    console.error('Error fetching received messages:', error);
-    return [];
-  }
+    if (error) {
+        console.error('Error fetching received messages:', error);
+        return [];
+    }
 
-  console.log('Received messages:', data);
-  return data as Message[];
+    console.log('Received messages:', data);
+    return data as Message[];
 }
 
 // Función para obtener historial de mensajes enviados
 export async function getSentMessages(userId: string) {
-  const nowISO = new Date().toISOString();
-  const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('sender_id', userId)
-      .eq('is_deleted', false)
-      .or(`expires_at.gt.${nowISO},expires_at.is.null`)
-      .order('created_at', { ascending: false });
+    const nowISO = new Date().toISOString();
+    const {data, error} = await supabase
+        .from('messages')
+        .select('*')
+        .eq('sender_id', userId)
+        .eq('is_deleted', false)
+        .or(`expires_at.gt.${nowISO},expires_at.is.null`)
+        .order('created_at', {ascending: false});
 
 
-  if (error) {
-    console.error('Error fetching sent messages:', error);
-    return [];
-  }
-  return data as Message[];
+    if (error) {
+        console.error('Error fetching sent messages:', error);
+        return [];
+    }
+    return data as Message[];
 }
 
 // Función para obtener mensajes en la papelera
 export async function getDeletedMessages(userId: string) {
-  const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
-    .eq('is_deleted', true)
-    .order('created_at', { ascending: false });
+    const {data, error} = await supabase
+        .from('messages')
+        .select('*')
+        .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+        .eq('is_deleted', true)
+        .order('created_at', {ascending: false});
 
-  if (error) {
-    console.error('Error fetching deleted messages:', error);
-    return [];
-  }
-  return data as Message[];
+    if (error) {
+        console.error('Error fetching deleted messages:', error);
+        return [];
+    }
+    return data as Message[];
 }
 
 // Función para enviar un mensaje
 export async function sendMessage({
-  sender_id,
-  recipient_id,
-  message,
-  expiration
-}: {
-  sender_id: string,
-  recipient_id: string,
-  message: string,
-  expiration: '5min' | '1hour' | '1day' | '1week'
+                                      sender_id,
+                                      recipient_id,
+                                      message,
+                                      expiration
+                                  }: {
+    sender_id: string,
+    recipient_id: string,
+    message: string,
+    expiration: '5min' | '1hour' | '1day' | '1week'
 }) {
-  // Calcular fecha de expiración
-  const expirationMap = {
-    '5min': 5 * 60 * 1000,
-    '1hour': 60 * 60 * 1000,
-    '1day': 24 * 60 * 60 * 1000,
-    '1week': 7 * 24 * 60 * 60 * 1000
-  };
+    // Calcular fecha de expiración
+    const expirationMap = {
+        '5min': 5 * 60 * 1000,
+        '1hour': 60 * 60 * 1000,
+        '1day': 24 * 60 * 60 * 1000,
+        '1week': 7 * 24 * 60 * 60 * 1000
+    };
 
-  const expiresAt = new Date(Date.now() + expirationMap[expiration]).toISOString();
-  console.log( sender_id , recipient_id , message)
-  const { data, error } = await supabase
-    .from('messages')
-    .insert([
-      {
-        sender_id,
-        recipient_id,
-        message,
-        expires_at: expiresAt,
-      }
-    ]);
+    const expiresAt = new Date(Date.now() + expirationMap[expiration]).toISOString();
+    console.log(sender_id, recipient_id, message)
+    const {data, error} = await supabase
+        .from('messages')
+        .insert([
+            {
+                sender_id,
+                recipient_id,
+                message,
+                expires_at: expiresAt,
+            }
+        ]);
 
-  if (error) {
-    console.error('Error sending message:', error);
-    return null;
-  }
+    if (error) {
+        console.error('Error sending message:', error);
+        return null;
+    }
 
-  return data;
+    return data;
 }
 
 // Función para marcar un mensaje como leído
 export async function markMessageAsRead(messageId: string) {
-  const { error } = await supabase
-    .from('messages')
-    .update({ is_read: true })
-    .eq('id', messageId);
+    const {error} = await supabase
+        .from('messages')
+        .update({is_read: true})
+        .eq('id', messageId);
 
-  if (error) {
-    console.error('Error marking message as read:', error);
-    return false;
-  }
+    if (error) {
+        console.error('Error marking message as read:', error);
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 // Función para marcar un mensaje como eliminado
 export async function markMessageAsDeleted(messageId: string) {
-  const { error } = await supabase
-    .from('messages')
-    .update({ is_deleted: true })
-    .eq('id', messageId);
+    const {error} = await supabase
+        .from('messages')
+        .update({is_deleted: true})
+        .eq('id', messageId);
 
-  if (error) {
-    console.error('Error marking message as deleted:', error);
-    return false;
-  }
+    if (error) {
+        console.error('Error marking message as deleted:', error);
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 // Función para restaurar un mensaje eliminado
 export async function restoreMessage(messageId: string) {
-  const { error } = await supabase
-    .from('messages')
-    .update({ is_deleted: false })
-    .eq('id', messageId);
+    const {error} = await supabase
+        .from('messages')
+        .update({is_deleted: false})
+        .eq('id', messageId);
 
-  if (error) {
-    console.error('Error restoring message:', error);
-    return false;
-  }
+    if (error) {
+        console.error('Error restoring message:', error);
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 // Función para eliminar permanentemente un mensaje
 export async function deleteMessagePermanently(messageId: string) {
-  const { error } = await supabase
-    .from('messages')
-    .delete()
-    .eq('id', messageId);
+    const {error} = await supabase
+        .from('messages')
+        .delete()
+        .eq('id', messageId);
 
-  if (error) {
-    console.error('Error deleting message permanently:', error);
-    return false;
-  }
+    if (error) {
+        console.error('Error deleting message permanently:', error);
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 // Suscripción a nuevos mensajes (realtime)
@@ -195,17 +195,17 @@ export async function deleteMessagePermanently(messageId: string) {
     .subscribe();
 }*/
 export function subscribeToMessages(userId: string, callback: (payload: any) => void): RealtimeChannel {
-  return supabase
-      .channel('messages-channel')
-      .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: `recipient_id=eq.${userId}`
-          },
-          (payload) => callback(payload)
-      )
-      .subscribe();
+    return supabase
+        .channel('messages-channel')
+        .on(
+            'postgres_changes',
+            {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'messages',
+                filter: `recipient_id=eq.${userId}`
+            },
+            (payload) => callback(payload)
+        )
+        .subscribe();
 }
