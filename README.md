@@ -26,29 +26,24 @@ Welcome to **Temporal Messages**, a web application designed for managing tempor
 ## 🖼️ Screenshots
 
 ### 1. **Home Page**
-![Home Page](./screenshots/home.png)
+![Home Page](./screenshots/Home receive a message.png)
 The home page provides an overview of the application. It includes a welcoming message and quick access to the main features.
 
 ### 2. **Messages Page**
-![Messages Page](./screenshots/messages.png)
+![Messages Page](./screenshots/messages screen.png)
 The messages page displays all received messages. It shows unread messages with a badge and allows users to view message details.
 
 ### 3. **History Page**
-![History Page](./screenshots/history.png)
+![History Page](./screenshots/history screen.png)
 The history page lists all previously sent or received messages, providing a complete log of user activity.
 
 ### 4. **Trash Page**
-![Trash Page](./screenshots/trash.png)
+![Trash Page](./screenshots/trash screen.png)
 The trash page contains deleted messages. Users can restore or permanently delete messages from this section.
 
 ### 5. **Settings Page**
-![Settings Page](./screenshots/settings.png)
+![Settings Page](./screenshots/settings screen.png)
 The settings page allows users to customize their profile, update preferences, and manage account settings.
-
-### 6. **User Profile Section**
-![User Profile](./screenshots/user-profile.png)
-The user profile section in the sidebar displays the user's avatar, name, and email. It also includes a sign-out button.
-
 ---
 
 ## 🔑 Using Clerk in the Project
