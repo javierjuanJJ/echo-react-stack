@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,4 +107,24 @@
 
 .sidebar-link-icon {
     @apply w-5 h-5;
+}
+
+/* Responsive utilities */
+@layer utilities {
+    .container {
+        @apply px-4 md:px-6 max-w-7xl mx-auto;
+    }
+    
+    .content-grid {
+        @apply grid gap-4 md:gap-6;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .flex-center {
+        @apply flex items-center justify-center;
+    }
+    
+    .flex-between {
+        @apply flex items-center justify-between;
+    }
 }

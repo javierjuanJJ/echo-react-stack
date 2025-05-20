@@ -1,32 +1,37 @@
-import {useUser} from '@clerk/clerk-react';
-import {Separator} from '@/components/ui/separator';
-import {Input} from '@/components/ui/input';
-import {Button} from '@/components/ui/button';
-import {Switch} from '@/components/ui/switch';
-import {useEffect, useState} from 'react';
-import {useToast} from '@/hooks/use-toast';
-import {ThemeToggle} from '@/components/ThemeToggle';
-import {useTheme} from '@/contexts/ThemeProvider';
-import {useTranslation} from 'react-i18next';
-import {LanguageSwitcher} from '@/components/LanguageSwitcher';
-import {shouldSendNotifications} from "@/utils/notificationUtils.ts";
+
+import { useUser } from '@clerk/clerk-react';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { useEffect, useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/contexts/ThemeProvider';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { shouldSendNotifications } from "@/utils/notificationUtils.ts";
 
 export default function SettingsPage() {
-    const {user, isLoaded} = useUser();
-    const {toast} = useToast();
-    const {theme} = useTheme();
-    const {t} = useTranslation();
+    const { user, isLoaded } = useUser();
+    const { toast } = useToast();
+    const { theme } = useTheme();
+    const { t } = useTranslation();
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [pushNotifications, setPushNotifications] = useState(false);
+    
     // Load notification preferences from localStorage
     useEffect(() => {
+        const savedEmailPref = localStorage.getItem('emailNotifications') === 'true';
         const savedPushPref = localStorage.getItem('pushNotifications') === 'true';
 
+        setEmailNotifications(savedEmailPref !== false);
         setPushNotifications(savedPushPref);
     }, []);
 
     const handleSaveSettings = () => {
         console.log('shouldSendNotifications(\'push\') ', shouldSendNotifications('push'))
+        localStorage.setItem('emailNotifications', String(emailNotifications));
         localStorage.setItem('pushNotifications', String(pushNotifications));
 
         toast({
@@ -44,12 +49,12 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-3xl mx-auto">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">{t('settings.title')}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('settings.title')}</h1>
             </div>
 
-            <Separator/>
+            <Separator />
 
             <div className="space-y-6">
                 <div>
@@ -97,7 +102,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <Separator/>
+                <Separator />
 
                 <div>
                     <h3 className="text-lg font-medium">{t('settings.appearance')}</h3>
@@ -107,7 +112,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="space-y-0.5">
                             <label className="text-sm font-medium">
                                 {t('settings.theme')}
@@ -116,10 +121,10 @@ export default function SettingsPage() {
                                 {theme === 'dark' ? t('settings.darkMode') : t('settings.lightMode')}
                             </p>
                         </div>
-                        <ThemeToggle/>
+                        <ThemeToggle />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="space-y-0.5">
                             <label className="text-sm font-medium">
                                 {t('common.language')}
@@ -128,11 +133,11 @@ export default function SettingsPage() {
                                 {t('settings.languageDesc')}
                             </p>
                         </div>
-                        <LanguageSwitcher/>
+                        <LanguageSwitcher />
                     </div>
                 </div>
 
-                <Separator/>
+                <Separator />
 
                 <div>
                     <h3 className="text-lg font-medium">{t('settings.notifications')}</h3>
@@ -142,7 +147,22 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="space-y-0.5">
+                            <label className="text-sm font-medium">
+                                {t('settings.emailNotifications')}
+                            </label>
+                            <p className="text-xs text-muted-foreground">
+                                {t('settings.emailNotificationsDesc')}
+                            </p>
+                        </div>
+                        <Switch
+                            checked={emailNotifications}
+                            onCheckedChange={setEmailNotifications}
+                        />
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="space-y-0.5">
                             <label className="text-sm font-medium">
                                 {t('settings.pushNotifications')}
@@ -158,7 +178,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-4">
                     <Button onClick={handleSaveSettings}>
                         {t('common.save')}
                     </Button>

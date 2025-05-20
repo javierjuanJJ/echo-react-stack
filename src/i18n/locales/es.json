@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "Cargando...",
@@ -12,6 +13,7 @@
   "auth": {
     "signIn": "Iniciar Sesión",
     "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
     "haveAccount": "¿Ya tienes una cuenta?",
     "noAccount": "¿No tienes una cuenta?"
   },
