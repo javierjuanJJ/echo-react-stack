@@ -1,73 +1,110 @@
-# Welcome to your Lovable project
+# 📨 Temporal Messages
 
-## Project info
+Welcome to **Temporal Messages**, a web application designed for managing temporary messages with a clean and user-friendly interface.
 
-**URL**: https://lovable.dev/projects/a874673f-b01b-4f4f-bc42-64bae0e333d0
+🌐 **Live Demo**: [https://temporal-messages.netlify.app/](https://temporal-messages.netlify.app/)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 📋 Index
 
-**Use Lovable**
+1. [📖 Project Description](#-project-description)
+2. [🖼️ Screenshots](#-screenshots)
+3. [🔑 Using Clerk in the Project](#-using-clerk-in-the-project)
+4. [🛠️ Technologies Used](#️-technologies-used)
+5. [🚀 Deployment Guide](#-deployment-guide)
+6. [🐳 Docker Compose Setup](#-docker-compose-setup)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a874673f-b01b-4f4f-bc42-64bae0e333d0) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📖 Project Description
 
-**Use your preferred IDE**
+**Temporal Messages** is a React-based web application that allows users to send, receive, and manage temporary messages. It features a sidebar navigation, real-time updates for unread messages, and user authentication powered by Clerk. The app is designed to be responsive and intuitive, making it easy for users to manage their messages efficiently.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🖼️ Screenshots
 
-Follow these steps:
+### 1. **Home Page**
+![Home Page](./screenshots/home.png)
+The home page provides an overview of the application. It includes a welcoming message and quick access to the main features.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2. **Messages Page**
+![Messages Page](./screenshots/messages.png)
+The messages page displays all received messages. It shows unread messages with a badge and allows users to view message details.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 3. **History Page**
+![History Page](./screenshots/history.png)
+The history page lists all previously sent or received messages, providing a complete log of user activity.
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 4. **Trash Page**
+![Trash Page](./screenshots/trash.png)
+The trash page contains deleted messages. Users can restore or permanently delete messages from this section.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### 5. **Settings Page**
+![Settings Page](./screenshots/settings.png)
+The settings page allows users to customize their profile, update preferences, and manage account settings.
 
-**Edit a file directly in GitHub**
+### 6. **User Profile Section**
+![User Profile](./screenshots/user-profile.png)
+The user profile section in the sidebar displays the user's avatar, name, and email. It also includes a sign-out button.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🔑 Using Clerk in the Project
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Clerk is used for user authentication and management in this project. Here's how it works:
 
-## What technologies are used for this project?
+1. **User Authentication**: Clerk handles user sign-in, sign-up, and session management seamlessly.
+2. **User Data**: The `useUser` hook from Clerk provides access to the authenticated user's data, such as `id`, `fullName`, `emailAddress`, and `imageUrl`.
+3. **Sign-Out**: The `SignOutButton` component from Clerk allows users to log out securely.
 
-This project is built with:
+Clerk simplifies the integration of authentication, making it easy to manage user sessions and data.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🛠️ Technologies Used
 
-Simply open [Lovable](https://lovable.dev/projects/a874673f-b01b-4f4f-bc42-64bae0e333d0) and click on Share -> Publish.
+This project is built using the following technologies:
 
-## Can I connect a custom domain to my Lovable project?
+- **React**: Frontend framework for building the user interface.
+- **TypeScript**: Adds type safety to the project.
+- **Clerk**: Authentication and user management.
+- **Supabase**: Backend-as-a-service for real-time data and database management.
+- **React Router**: For navigation and routing.
+- **i18next**: For internationalization and translations.
+- **Lucide Icons**: For modern and customizable icons.
+- **Vite**: Development environment and build tool.
+- **Tailwind CSS**: For styling and responsive design.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🚀 Deployment Guide
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+To deploy this project, follow these steps:
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+    ```
+   
+2. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory and add the following variables:
+   ```bash
+    # Clerk Authentication
+    VITE_CLERK_PUBLISHABLE_KEY=<your_clerk_publishable_key_here>
+    VITE_CLERK_SECRET_KEY=<your_clerk_secret_key_here>
+    
+    # Supabase
+    VITE_SUPABASE_URL=<your_supabase_url_here>
+    VITE_SUPABASE_ANON_KEY=<your_supabase_anon_key_here>
+   
+3. **Run the Development Server**:
+   ```bash
+    npm run dev
+    ```
+    Open your browser and navigate to `http://localhost:5173` to view the application.
+4. **Build for Production**:
+   ```bash
+   npm run build
+   ```
