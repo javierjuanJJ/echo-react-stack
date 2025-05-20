@@ -9,7 +9,7 @@ Welcome to **Temporal Messages**, a web application designed for managing tempor
 ## 📋 Index
 
 1. [📖 Project Description](#-project-description)
-2. [🖼️ Screenshots](#-screenshots)
+2. [🖼️ Screenshoots](#-screenshoots)
 3. [🔑 Using Clerk in the Project](#-using-clerk-in-the-project)
 4. [🛠️ Technologies Used](#️-technologies-used)
 5. [🚀 Deployment Guide](#-deployment-guide)
@@ -23,26 +23,27 @@ Welcome to **Temporal Messages**, a web application designed for managing tempor
 
 ---
 
-## 🖼️ Screenshots
+## 🖼️ Screenshoots
 
 ### 1. **Home Page**
-![Home Page](./screenshots/Home-receive-a-message.png)
+![Home Page](./screenshoots/Home-receive-a-message.png)
 The home page provides an overview of the application. It includes a welcoming message and quick access to the main features.
 
 ### 2. **Messages Page**
-![Messages Page](./screenshots/messages-screen.png)
+![Messages Page](./screenshoots/messages-screen.png)
 The messages page displays all received messages. It shows unread messages with a badge and allows users to view message details.
 
 ### 3. **History Page**
-![History Page](./screenshots/history-screen.png)
+![History Page](./screenshoots/history-screen.png)
 The history page lists all previously sent or received messages, providing a complete log of user activity.
 
 ### 4. **Trash Page**
-![Trash Page](./screenshots/trash-screen.png)
+![Trash Page](./screenshoots/trash-screen.png)
 The trash page contains deleted messages. Users can restore or permanently delete messages from this section.
 
 ### 5. **Settings Page**
-![Settings Page](./screenshots/settings-screen.png)
+![Settings Page](./screenshoots/settings-screen-1.png)
+![Settings Page](./screenshoots/settings-screen-2.png)
 The settings page allows users to customize their profile, update preferences, and manage account settings.
 ---
 
